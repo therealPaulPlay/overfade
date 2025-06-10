@@ -5,6 +5,13 @@ A lightweight library for making the overflowing content fade out smoothly and d
 The library uses the `mask-image` property to fade out the desired edges. This allows it to play nicely with transparency.
 What's more, it smoothly adjusts the mask image strength when swiping content into the overflow using javascript.
 
+# GIF examples
+
+- Horizontal fade
+![Overfade example 1](./resources/example-1.gif)
+- All-sides fade
+![Overfade example 1](./resources/example-2.gif)
+
 # Installation & initialization
 Install the library using `npm install overfade` and initialize it using:
 ```js
@@ -24,13 +31,7 @@ To control the length of the fade, use the `of-length-x`class. It defaults to 1,
 
 # Code example
 ```html
-<div class="of-left of-right">
-    <p>This is a horizontally overflowing container.</p>
+<div class="of-left of-right of-length-2">
+    <p>This is a horizontally overflowing container with a longer fade.</p>
 </div>
 ```
-# GIF examples
-
-- Horizontal fade
-![Overfade example 1](./resources/example-1.gif)
-- All-sides fade
-![Overfade example 1](./resources/example-2.gif)
