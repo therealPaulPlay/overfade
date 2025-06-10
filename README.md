@@ -1,5 +1,5 @@
 # Overfade
-A lightweight library for making the overflowing content fade out smoothly and dynamically.
+A lightweight library for making overflowing content fade out smoothly and dynamically.
 
 # What makes it special
 The library uses the `mask-image` property to fade out the desired edges. This allows it to play nicely with transparency.

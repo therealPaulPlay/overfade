@@ -1,0 +1,31 @@
+{
+  "name": "overfade",
+  "version": "0.0.1",
+  "description": "A lightweight library for making overflowing content fade out smoothly and dynamically.",
+  "keywords": [
+    "overflow",
+    "fade",
+    "scroll",
+    "container",
+    "options",
+    "bar"
+  ],
+  "homepage": "https://github.com/therealPaulPlay/overfade#readme",
+  "bugs": {
+    "url": "https://github.com/therealPaulPlay/overfade/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therealPaulPlay/overfade.git"
+  },
+  "license": "MIT",
+  "author": "PaulPlay",
+  "type": "module",
+  "main": "overfade.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
