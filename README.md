@@ -3,7 +3,7 @@ A lightweight library for making the overflowing content fade out smoothly and d
 
 # What makes it special
 The library uses the `mask-image` property to fade out the desired edges. This allows it to play nicely with transparency.
-What's more, it smoothly adjusts the mask image strength when swiping content into the overflow using javascript.
+What's more, it smoothly adjusts the mask image strength when scrolling content into the overflow using javascript.
 
 # GIF examples
 
@@ -15,7 +15,7 @@ What's more, it smoothly adjusts the mask image strength when swiping content in
 # Installation & initialization
 Install the library using `npm install overfade` and initialize it using:
 ```js
-import init from "../overfade.js";
+import init from "overfade";
 init();
 ```
 
