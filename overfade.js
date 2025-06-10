@@ -1,5 +1,7 @@
 export default function init() {
-    if (typeof window === 'undefined') return console.warn("Overade is only supported in browser environments.");
+    if (typeof window === 'undefined') return console.warn("Overfade is only supported in browser environments.");
+
+    const resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
 
     function createMask(scroll, remaining, length, sides) {
         const masks = [];
@@ -46,14 +48,19 @@ export default function init() {
             right: classes.contains('of-right')
         };
 
+        // Return if the element has no overfade classes
         if (!Object.values(sides).some(Boolean)) {
             if (el._overfadeHandler) {
+                // If it previously had overfade classes, remove the event listener and observer
                 el.removeEventListener('scroll', el._overfadeHandler);
                 el._overfadeHandler = undefined;
                 el.style.maskImage = '';
+                resizeObserver.unobserve(el);
             }
             return;
         }
+
+        resizeObserver.observe(el);
 
         const update = () => {
             const scroll = { x: el.scrollLeft, y: el.scrollTop };
