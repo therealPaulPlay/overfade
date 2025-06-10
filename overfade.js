@@ -6,8 +6,8 @@ export default function init() {
         const fade = 8 * length;
 
         if (sides.left || sides.right) {
-            const lf = sides.left ? Math.min(scroll.x / (20 * length), 1) : 0;
-            const rf = sides.right ? Math.min(remaining.x / (20 * length), 1) : 0;
+            const lf = sides.left ? Math.min(scroll.x / (15 * length), 1) : 0;
+            const rf = sides.right ? Math.min(remaining.x / (15 * length), 1) : 0;
 
             masks.push(`linear-gradient(to right,
         rgba(0,0,0,${1 - lf}) 0%, rgba(0,0,0,${1 - 0.674 * lf}) ${fade * 0.25}%,
@@ -20,8 +20,8 @@ export default function init() {
         }
 
         if (sides.top || sides.bottom) {
-            const tf = sides.top ? Math.min(scroll.y / (20 * length), 1) : 0;
-            const bf = sides.bottom ? Math.min(remaining.y / (20 * length), 1) : 0;
+            const tf = sides.top ? Math.min(scroll.y / (15 * length), 1) : 0;
+            const bf = sides.bottom ? Math.min(remaining.y / (15 * length), 1) : 0;
 
             masks.push(`linear-gradient(to bottom,
         rgba(0,0,0,${1 - tf}) 0%, rgba(0,0,0,${1 - 0.674 * tf}) ${fade * 0.25}%,
