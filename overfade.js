@@ -2,6 +2,7 @@ export default function init() {
     if (typeof window === 'undefined') return console.warn("Overfade is only supported in browser environments.");
 
     const resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
+    const contentObserver = new MutationObserver(mutations => mutations.forEach(({ target }) => updateElement(target)));
 
     function createMask(scroll, remaining, length, sides) {
         const masks = [];
@@ -56,11 +57,13 @@ export default function init() {
                 el._overfadeHandler = undefined;
                 el.style.maskImage = '';
                 resizeObserver.unobserve(el);
+                contentObserver.unobserve(el);
             }
             return;
         }
 
         resizeObserver.observe(el);
+        contentObserver.observe(el, { childList: true, subtree: true });
 
         const update = () => {
             const scroll = { x: el.scrollLeft, y: el.scrollTop };
