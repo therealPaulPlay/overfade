@@ -1,5 +1,6 @@
 export default function init() {
     if (typeof window === 'undefined') return console.warn("Overfade is only supported in browser environments.");
+    if (window.__overfade_initialized) return console.warn("Overfade has already been initialized!");
 
     const resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
     const contentObserver = new MutationObserver(mutations => mutations.forEach(({ target }) => updateElement(target)));
@@ -104,4 +105,6 @@ export default function init() {
             document.querySelectorAll('*').forEach(updateElement)
         );
     }
+
+    window.__overfade_initialized = true;
 };

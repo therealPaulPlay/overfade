@@ -1,6 +1,6 @@
 {
   "name": "overfade",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A lightweight library for making overflowing content fade out smoothly and dynamically.",
   "keywords": [
     "overflow",
