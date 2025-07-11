@@ -126,6 +126,23 @@
             color: #495057;
             text-align: center;
         }
+
+        .textarea-test {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            scrollbar-width: none;
+        }
+
+        .textarea-test::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 
@@ -145,6 +162,14 @@
                 <button onclick="toggleClass('of-left')" id="btn-left">Left</button>
                 <button onclick="toggleClass('of-right')" id="btn-right">Right</button>
                 <button onclick="toggleClass('of-length-2')" id="btn-length">Length 2x</button>
+            </div>
+        </div>
+
+        <div class="test-area">
+            <div class="label">Dynamic Textarea Test</div>
+            <div id="textareaContainer">
+                <button onclick="addTextarea()" style="margin-bottom: 20px;">Add Empty Textarea (text loads 1s
+                    later)</button>
             </div>
         </div>
     </div>
@@ -193,6 +218,31 @@
                     qui ratione voluptatem sequi nesciunt.`
             }
         }
+
+        // Fill textarea with lots of text
+        function addTextarea() {
+            const container = document.getElementById('textareaContainer');
+            const textarea = document.createElement('textarea');
+            textarea.className = 'textarea-test of-top of-bottom';
+            textarea.placeholder = 'Empty textarea - content loading...';
+
+            // Add event listener to test it works alongside overfade
+            textarea.addEventListener('input', () => {
+                console.log('Input event fired - user is typing');
+            });
+
+            container.appendChild(textarea);
+
+            // Simulate delayed content loading (this should trigger the bug)
+            setTimeout(() => {
+                textarea.value = Array(20).fill(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+`).join('');
+                textarea.placeholder = 'Content loaded - should show fade masks now! Try typing to test events.';
+            }, 1000);
+        }
+
+        window.addTextarea = addTextarea;
 
         fillWithExampleText();
     </script>

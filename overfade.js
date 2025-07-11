@@ -2,6 +2,22 @@ export default function init() {
     if (typeof window === 'undefined') return console.warn("Overfade is only supported in browser environments.");
     if (window.__overfade_initialized) return console.warn("Overfade has already been initialized!");
 
+    // Global listener for text content changes for Inputs and Textareas
+    ['HTMLTextAreaElement', 'HTMLInputElement'].forEach(elementType => {
+        const proto = window[elementType]?.prototype;
+        if (!proto) return;
+        const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+        if (descriptor?.set) {
+            Object.defineProperty(proto, 'value', {
+                set: function (value) {
+                    descriptor.set.call(this, value);
+                    if (this._overfadeHandler) this._overfadeHandler();
+                },
+                get: descriptor.get
+            });
+        }
+    });
+
     const resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
     const contentObserver = new MutationObserver(mutations => mutations.forEach(({ target }) => updateElement(target)));
 
