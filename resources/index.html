@@ -143,6 +143,15 @@
         .textarea-test::-webkit-scrollbar {
             display: none;
         }
+
+        .expanding-box {
+            height: 50px;
+            background: #e6e6e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: height 2s ease;
+        }
     </style>
 </head>
 
@@ -185,6 +194,20 @@
             </div>
             <div class="status">
                 This simulates what happens in Svelte when a variable changes. The content updates but the mask doesn't recompute unless you scroll.
+            </div>
+        </div>
+
+        <div class="test-area">
+            <div class="label">Expanding Child Test</div>
+            <div class="scroll-content of-top of-bottom" id="expandingContainer" style="height: 200px; padding: 12px;">
+                <div id="expandingChild" class="expanding-box"></div>
+            </div>
+            <div class="controls" style="margin-top: 10px;">
+                <button onclick="expandChild()">Expand (triggers overflow)</button>
+                <button onclick="shrinkChild()">Shrink (removes overflow)</button>
+            </div>
+            <div class="status">
+                Tests if ResizeObserver properly detects child element size changes via CSS transitions
             </div>
         </div>
     </div>
@@ -278,6 +301,20 @@
         window.setShortText = setShortText;
         window.setLongText = setLongText;
         window.setMediumText = setMediumText;
+
+        // Expanding child test functions
+        function expandChild() {
+            const child = document.getElementById('expandingChild');
+            child.style.height = '600px';
+        }
+
+        function shrinkChild() {
+            const child = document.getElementById('expandingChild');
+            child.style.height = '50px';
+        }
+
+        window.expandChild = expandChild;
+        window.shrinkChild = shrinkChild;
 
         fillWithExampleText();
     </script>

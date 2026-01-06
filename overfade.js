@@ -25,7 +25,14 @@ export default function init() {
             }
         });
 
-        resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
+        resizeObserver = new ResizeObserver(entries => {
+            entries.forEach(entry => {
+                // If the resized element has overfade classes, update it
+                // Otherwise, find the closest ancestor with overfade classes
+                const overfadeElement = entry.target.closest?.(OVERFADE_SELECTOR);
+                if (overfadeElement) updateElement(overfadeElement);
+            });
+        });
 
         // Content observer: observes elements with overfade classes changes in their children's content
         contentObserver = new MutationObserver(mutations => {
@@ -78,17 +85,20 @@ function updateElement(el) {
     // Return if the element has no overfade classes
     if (!Object.values(sides).some(Boolean)) {
         if (el._overfadeHandler) {
-            // If it previously had overfade classes, remove the event listener and observer
+            // If it previously had overfade classes (indicated by the handler), remove the event listener and observer
             el.removeEventListener("scroll", el._overfadeHandler);
             el._overfadeHandler = undefined;
             el.style.maskImage = "";
             resizeObserver.unobserve(el);
+            el.querySelectorAll('*').forEach(child => resizeObserver.unobserve(child));
             contentObserver.unobserve(el);
         }
         return;
     }
 
+    // Observe element and children (calling observe multiple times is safe - they don't "stack")
     resizeObserver.observe(el);
+    el.querySelectorAll('*').forEach(child => resizeObserver.observe(child));
     contentObserver.observe(el, { childList: true, subtree: true });
 
     const update = () => {
