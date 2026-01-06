@@ -172,6 +172,21 @@
                     later)</button>
             </div>
         </div>
+
+        <div class="test-area">
+            <div class="label">Dynamic Content Test</div>
+            <div class="scroll-content of-top of-bottom" id="dynamicContent" style="height: 200px; padding: 12px;">
+                <p id="dynamicText">Short text - no overflow</p>
+            </div>
+            <div class="controls" style="margin-top: 10px;">
+                <button onclick="setShortText()">Short Text (no overflow)</button>
+                <button onclick="setLongText()">Long Text (with overflow)</button>
+                <button onclick="setMediumText()">Medium Text (no overflow)</button>
+            </div>
+            <div class="status">
+                This simulates what happens in Svelte when a variable changes. The content updates but the mask doesn't recompute unless you scroll.
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -243,6 +258,26 @@
         }
 
         window.addTextarea = addTextarea;
+
+        // Dynamic content test functions
+        function setShortText() {
+            const p = document.getElementById('dynamicText');
+            p.textContent = 'Short text - no overflow';
+        }
+
+        function setLongText() {
+            const p = document.getElementById('dynamicText');
+            p.textContent = Array(50).fill('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ').join('\n\n');
+        }
+
+        function setMediumText() {
+            const p = document.getElementById('dynamicText');
+            p.textContent = Array(3).fill('This is medium length text that fits within the container without causing overflow. ').join('');
+        }
+
+        window.setShortText = setShortText;
+        window.setLongText = setLongText;
+        window.setMediumText = setMediumText;
 
         fillWithExampleText();
     </script>

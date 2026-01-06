@@ -2,18 +2,20 @@ let overfadeInitialized = false;
 let resizeObserver;
 let contentObserver;
 
+const OVERFADE_SELECTOR = ".of-top, .of-bottom, .of-left, .of-right";
+
 export default function init() {
     try {
-        if (typeof window === 'undefined') return console.warn("Overfade is only supported in browser environments!");
+        if (typeof window === "undefined") return console.warn("Overfade is only supported in browser environments!");
         if (overfadeInitialized) return console.warn("Overfade has already been initialized!");
 
         // Global listener for text content changes for inputs and textareas
-        ['HTMLTextAreaElement', 'HTMLInputElement'].forEach(elementType => {
+        ["HTMLTextAreaElement", "HTMLInputElement"].forEach(elementType => {
             const proto = window[elementType]?.prototype;
             if (!proto) return;
-            const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+            const descriptor = Object.getOwnPropertyDescriptor(proto, "value");
             if (descriptor?.set) {
-                Object.defineProperty(proto, 'value', {
+                Object.defineProperty(proto, "value", {
                     set: function (value) {
                         descriptor.set.call(this, value);
                         if (this._overfadeHandler) this._overfadeHandler();
@@ -24,28 +26,37 @@ export default function init() {
         });
 
         resizeObserver = new ResizeObserver(entries => entries.forEach(entry => updateElement(entry.target)));
-        contentObserver = new MutationObserver(mutations => mutations.forEach(({ target }) => updateElement(target)));
 
+        // Content observer: observes elements with overfade classes changes in their children's content
+        contentObserver = new MutationObserver(mutations => {
+            mutations.forEach(({ target }) => {
+                const overfadeElement = target.closest?.(OVERFADE_SELECTOR);
+                if (overfadeElement) updateElement(overfadeElement);
+            });
+        });
+
+        // Global observer: watch for new elements with overfade classes and class changes
         new MutationObserver(mutations => {
             mutations.forEach(({ type, target, addedNodes, attributeName }) => {
-                if (type === 'attributes' && attributeName === 'class') updateElement(target);
-                if (type === 'childList') {
+                if (type === "attributes" && attributeName === "class") updateElement(target);
+                else if (type === "childList" && addedNodes.length) {
                     addedNodes.forEach(node => {
                         if (node.nodeType === 1) {
                             updateElement(node); // Update parent node
-                            node.querySelectorAll?.('*').forEach(updateElement); // And update all children
+                            node.querySelectorAll?.(OVERFADE_SELECTOR).forEach(updateElement); // And update all children that have overfade classes
                         }
                     });
                 }
             });
         }).observe(document.body, { childList: true, subtree: true, attributes: true });
 
-        if (document.readyState !== 'loading') document.querySelectorAll('*').forEach(updateElement);
-        else {
-            document.addEventListener('DOMContentLoaded', () =>
-                document.querySelectorAll('*').forEach(updateElement)
-            );
-        }
+        // Initialize on siteload
+        const initExistingElements = () => {
+            document.querySelectorAll(OVERFADE_SELECTOR).forEach(updateElement);
+        };
+
+        if (document.readyState !== "loading") initExistingElements();
+        else document.addEventListener("DOMContentLoaded", initExistingElements);
 
         overfadeInitialized = true;
     } catch (error) {
@@ -54,22 +65,23 @@ export default function init() {
 };
 
 function updateElement(el) {
+    if (!el || !el.classList) return;
     const classes = el.classList;
-    const length = parseFloat([...classes].find(c => c.startsWith('of-length-'))?.split('-')[2]) || 1;
+    const length = parseFloat([...classes].find(c => c.startsWith("of-length-"))?.split("-")[2]) || 1;
     const sides = {
-        top: classes.contains('of-top'),
-        bottom: classes.contains('of-bottom'),
-        left: classes.contains('of-left'),
-        right: classes.contains('of-right')
+        top: classes.contains("of-top"),
+        bottom: classes.contains("of-bottom"),
+        left: classes.contains("of-left"),
+        right: classes.contains("of-right")
     };
 
     // Return if the element has no overfade classes
     if (!Object.values(sides).some(Boolean)) {
         if (el._overfadeHandler) {
             // If it previously had overfade classes, remove the event listener and observer
-            el.removeEventListener('scroll', el._overfadeHandler);
+            el.removeEventListener("scroll", el._overfadeHandler);
             el._overfadeHandler = undefined;
-            el.style.maskImage = '';
+            el.style.maskImage = "";
             resizeObserver.unobserve(el);
             contentObserver.unobserve(el);
         }
@@ -88,12 +100,12 @@ function updateElement(el) {
 
         const mask = createMask(scroll, remaining, length, sides);
         el.style.maskImage = mask;
-        if ((sides.left || sides.right) && (sides.top || sides.bottom)) el.style.maskComposite = 'intersect';
+        if ((sides.left || sides.right) && (sides.top || sides.bottom)) el.style.maskComposite = "intersect";
     };
 
-    if (el._overfadeHandler) el.removeEventListener('scroll', el._overfadeHandler);
+    if (el._overfadeHandler) el.removeEventListener("scroll", el._overfadeHandler);
     el._overfadeHandler = update; // Assign handler, so that removing it becomes possible
-    el.addEventListener('scroll', update, { passive: true });
+    el.addEventListener("scroll", update, { passive: true });
     update();
 }
 
@@ -129,5 +141,5 @@ function createMask(scroll, remaining, length, sides) {
         rgba(0,0,0,${0.326 * bf + 1 - bf}) ${100 - fade * 0.25}%, rgba(0,0,0,${1 - bf}) 100%)`);
     }
 
-    return masks.join(', ');
+    return masks.join(", ");
 }
