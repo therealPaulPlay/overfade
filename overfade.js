@@ -90,15 +90,16 @@ function updateElement(el) {
             el._overfadeHandler = undefined;
             el.style.maskImage = "";
             resizeObserver.unobserve(el);
-            el.querySelectorAll('*').forEach(child => resizeObserver.unobserve(child));
+            el.childNodes.forEach(child => child.nodeType === 1 && resizeObserver.unobserve(child));
             contentObserver.unobserve(el);
         }
         return;
     }
 
-    // Observe element and children (calling observe multiple times is safe - they don't "stack")
+    // Observe element and direct children only (deep children will affect direct children if they impact layout)
+    // On subsequent calls, the observers will be renewed, they don't stack
     resizeObserver.observe(el);
-    el.querySelectorAll('*').forEach(child => resizeObserver.observe(child));
+    el.childNodes.forEach(child => child.nodeType === 1 && resizeObserver.observe(child));
     contentObserver.observe(el, { childList: true, subtree: true });
 
     const update = () => {
